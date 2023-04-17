@@ -41,3 +41,53 @@ const likeUnlikePost=() =>{
         })
     }))
 }
+
+const getData=()=> {
+    $.ajax({
+        type: 'GET',
+        url: `/data/${visible}/`,
+        success: function(response){
+            console.log('success', response)
+            const data = response.data
+            setTimeout(()=>{
+                spinnerBox.classList.add('not-visible')
+                
+                console.log(data)
+                data.forEach(element => {
+                  postsBox.innerHTML += `
+                    <div class="card mb-2" style="width: 18rem;">
+                        <div class="card-body">
+                            <h5 class="card-title">${element.title}</h5>
+                            <p class="card-text">${element.body}</p>
+                        </div>
+                        <div class="card-footer">
+                            <div class ="row">
+                                <div class="col">
+                                    <a href="${url}${element.id}" class="btn btn-primary">Details</a>
+                                </div>
+                                <div class="col">
+                                    <form class="like-unlike-forms" data-form-id="${element.id}">                                   
+                                        <button class="btn btn-primary" id="like-unlike-${element.id}">${element.liked ? `Unlike(${element.count})`: `Like(${element.count})`}</button>
+                                    </form>
+                                </div>
+                            </div>
+                    </div
+                    </div>
+                  `
+                });
+                likeUnlikePost()
+            }, 100)
+            console.log(response.size)
+            if(response.size === 0){
+                endBox.textContent= 'No posts added yet'
+            }
+            else if (response.size <= visible){
+                loadBtn.classList.add('not-visible')
+                endBox.textContent= 'No more posts to load'
+            }       
+        },
+        error: function(error){
+            console.log('error', error)
+        }
+    })
+}
