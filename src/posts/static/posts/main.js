@@ -1,3 +1,6 @@
+
+
+
 const postsBox = document.getElementById('posts-box')
 const spinnerBox = document.getElementById('spinner-box')
 const loadBtn = document.getElementById('load-btn')
@@ -16,6 +19,30 @@ const closeBtns = [...document.getElementsByClassName('add-modal-close')]
 
 const url = window.location.href
 
+
+
+const getCookie=(name) => {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+const csrftoken = getCookie('csrftoken');
+
+const deleted = localStorage.getItem('title')
+if(deleted){
+    handleAlerts('danger', `deleted "${deleted}"`)
+    localStorage.clear()
+}
 
 const likeUnlikePost=() =>{
     const likeUnlikeForms = [...document.getElementsByClassName('like-unlike-forms')]
@@ -41,6 +68,9 @@ const likeUnlikePost=() =>{
         })
     }))
 }
+
+
+let visible =3
 
 const getData=()=> {
     $.ajax({
@@ -97,6 +127,7 @@ loadBtn.addEventListener('click', ()=>{
     visible+=3
     getData()
 })
+
 let newPostId = null
 postForm.addEventListener('submit', e=>{
     e.preventDefault()
@@ -143,3 +174,36 @@ postForm.addEventListener('submit', e=>{
         }
     })
 })
+
+
+addBtn.addEventListener('click', ()=>{
+    dropzone.classList.remove('not-visible')
+})
+
+closeBtns.forEach(btn=> btn.addEventListener('click', ()=>{
+    postForm.reset()
+    if(!dropzone.classList.contains('not-visible')){
+        dropzone.classList.add('not-visible')
+
+    }
+    const myDropzone = Dropzone.forElement("#my-dropzone")
+    myDropzone.removeAllFiles(true)
+}))
+
+Dropzone.autoDiscover = false
+const myDropzone = new Dropzone('#my-dropzone', {
+    url: 'upload/',
+    init : function() {
+        this.on('sending', function(file, xhr, formData){
+            formData.append('csrfmiddlewaretoken', csrftoken)
+            formData.append('new_post_id', newPostId)
+        })
+    },
+    maxFiles: 5,
+    maxFileSize: 4,
+    acceptedFiles: '.png, .jpg, .jpeg'
+})
+
+
+
+getData()
