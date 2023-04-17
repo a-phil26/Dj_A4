@@ -85,7 +85,7 @@ const getData=()=> {
                 console.log(data)
                 data.forEach(element => {
                   postsBox.innerHTML += `
-                    <div class="card mb-2" style="width: 18rem;">
+                    <div class="card mb-2" style="width: 30rem;">
                         <div class="card-body">
                             <h5 class="card-title">${element.title}</h5>
                             <p class="card-text">${element.body}</p>
@@ -101,7 +101,7 @@ const getData=()=> {
                                     </form>
                                 </div>
                             </div>
-                    </div
+                    </div>
                     </div>
                   `
                 });

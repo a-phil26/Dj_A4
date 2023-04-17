@@ -59,10 +59,9 @@
         </div>
     </div>
 
-
     <!-- carousel -->
     {% if  obj.get_photos %}
-        <div id="carouselExample" class="carousel slide mb-2">
+        <div id="carouselExample" class="carousel slide mt-2 mb-2">
             <div class="carousel-inner">
             {% for p in obj.get_photos %}
                 <div class="carousel-item {% if forloop.counter == 1 %}active{% endif %}">
@@ -86,10 +85,10 @@
 
 
 
-    
-<a href="{% url 'posts:main-board' %} "id="back-btn" class="btn btn-info">Back</a>
-<button id="update-btn" class="btn btn-primary not-visible" data-bs-toggle="modal" data-bs-target="#updateModal" >Update</button>
-<button id="delete-btn" class="btn btn-danger not-visible" data-bs-toggle="modal" data-bs-target="#deleteModal">Delete</button>
+
+<a href="{% url 'posts:main-board' %} "id="back-btn" class="btn btn-info mt-2">Back</a>
+<button id="update-btn" class="btn btn-primary not-visible mt-2" data-bs-toggle="modal" data-bs-target="#updateModal" >Update</button>
+<button id="delete-btn" class="btn btn-danger not-visible mt-2" data-bs-toggle="modal" data-bs-target="#deleteModal">Delete</button>
 <div id ="spinner-box" class="text-center">
     <div class="spinner-border" role="status"></div>
 </div>

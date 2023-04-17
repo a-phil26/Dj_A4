@@ -1,3 +1,4 @@
+console.log("hellow asdfasdf")
 
 const postBox = document.getElementById('post-box')
 const backBtn = document.getElementById('back-btn')

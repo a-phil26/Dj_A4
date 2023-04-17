@@ -15,7 +15,7 @@ class Post(models.Model):
     def _str_(self):
         return str(self.title)
     
-      
+    
     @property
     def like_count(self):
         return self.liked.all().count()
@@ -32,4 +32,4 @@ class Photo(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     
     def _str_(self):
-        return f"{self.post.title}-{self.pk}"        
+        return f"{self.post.title}-{self.pk}"
