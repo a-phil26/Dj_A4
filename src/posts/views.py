@@ -1,0 +1,61 @@
+from django.shortcuts import render
+from .models import Post, Photo
+from django.http import JsonResponse, HttpResponse
+from .forms import PostForm
+from profiles.models import Profile
+from .utils import action_permission
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import redirect
+
+
+@login_required
+def load_post_data_view(request, num_posts):
+    response = is_ajax(request)
+    if response:
+        
+        visible = 3
+        upper = num_posts
+        lower = upper - visible
+        size = Post.objects.all().count()
+        
+        qs = Post.objects.all()
+        data = []
+        for obj in qs:
+            item = {
+                'id': obj.id,
+                'title': obj.title,
+                'body' : obj.body,
+                'liked': True if request.user in obj.liked.all() else False,
+                'count': obj.like_count,
+                'author': obj.author.user.username
+            }
+            data.append(item)
+        return JsonResponse({'data':data[lower:upper], 'size': size})
+    return redirect('posts:main-board')
+
+@login_required
+def post_detail_data_view(request, pk):
+    obj = Post.objects.get(pk=pk)
+    data = {
+       'id': obj.id,
+       'title': obj.title,
+       'body': obj.body,
+       'author': obj.author.user.username,
+       'logged_in': request.user.username,
+   }
+    return JsonResponse({'data': data})
+
+@login_required
+def like_unlike_post(request):
+    response = is_ajax(request)
+    if response:
+        pk = request.POST.get('pk')
+        obj = Post.objects.get(pk=pk)
+        if request.user in obj.liked.all():
+            liked = False
+            obj.liked.remove(request.user)
+        else:
+            liked = True
+            obj.liked.add(request.user)
+        return JsonResponse({'liked': liked, 'count': obj.like_count})
+    return redirect('posts:main-board')
