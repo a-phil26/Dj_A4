@@ -14,3 +14,14 @@ class Post(models.Model):
     
     def _str_(self):
         return str(self.title)
+    
+      
+    @property
+    def like_count(self):
+        return self.liked.all().count()
+    
+    def get_photos(self):
+        return self.photo_set.all()
+    
+    class Meta:
+        ordering = ("-created",)
