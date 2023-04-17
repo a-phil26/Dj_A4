@@ -78,3 +78,13 @@ def update_post(request, pk):
             'body': new_body,
         })
     return redirect('posts:main-board')
+
+@login_required
+@action_permission
+def delete_post(request, pk):
+    obj = Post.objects.get(pk=pk)
+    response = is_ajax(request)
+    if response:
+        obj.delete()
+        return JsonResponse({})
+    return redirect('posts:main-board')
