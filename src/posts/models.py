@@ -25,3 +25,11 @@ class Post(models.Model):
     
     class Meta:
         ordering = ("-created",)
+
+class Photo(models.Model):
+    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    image = models.ImageField(upload_to="photos")
+    created = models.DateTimeField(auto_now_add=True)
+    
+    def _str_(self):
+        return f"{self.post.title}-{self.pk}"        
