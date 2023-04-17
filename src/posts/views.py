@@ -8,6 +8,46 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect
 
 
+
+# Create your views here.
+def is_ajax(request):
+    return request.headers.get('X-Requested-With') == 'XMLHttpRequest'
+
+@login_required
+def post_list_and_create(request):
+    form = PostForm(request.POST or None)
+    #qs = Post.objects.all()
+    
+    response = is_ajax(request)
+    if response:
+        if form.is_valid():
+            author = Profile.objects.get(user=request.user)
+            instance = form.save(commit=False)
+            instance.author = author
+            instance.save() 
+            return JsonResponse({
+                'title': instance.title,
+                'body': instance.body,
+                'author': instance.author.user.username,
+                'id': instance.id,
+            })   
+    context ={
+        'form' : form,
+    }
+    return render(request, 'posts/main.html', context)
+
+@login_required
+def post_detial(request, pk):
+    obj = Post.objects.get(pk=pk)
+    form = PostForm()
+    
+    context = {
+        'obj': obj,
+        'form': form,
+    }
+    
+    return render(request, 'posts/detail.html', context)
+
 @login_required
 def load_post_data_view(request, num_posts):
     response = is_ajax(request)
@@ -60,7 +100,6 @@ def like_unlike_post(request):
         return JsonResponse({'liked': liked, 'count': obj.like_count})
     return redirect('posts:main-board')
 
-
 @login_required
 @action_permission
 def update_post(request, pk):
@@ -88,3 +127,13 @@ def delete_post(request, pk):
         obj.delete()
         return JsonResponse({})
     return redirect('posts:main-board')
+
+
+def image_upload_view(request):
+    if request.method == 'POST':
+        img = request.FILES.get('file')
+        new_post_id = request.POST.get('new_post_id')
+        post = Post.objects.get(id = new_post_id)
+        Photo.objects.create(image=img, post=post)
+        return HttpResponse()
+    
